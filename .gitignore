@@ -1,2 +1,9 @@
 *.class
 *.log
+/bin/
+.DS_Store
+/target
+.cache-main
+.classpath
+.project
+.settings/
