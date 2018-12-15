@@ -13,6 +13,8 @@ lazy val rootProject = (project in file("."))
     libraryDependencies += "com.typesafe.akka" %% "akka-http"   % "10.1.5",
 	libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.12",
 	libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.5",
+	libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.6.0",
+	libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.5.0",
 
     libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "2.20.0"
     

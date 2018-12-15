@@ -1,18 +1,20 @@
-package main.scala.com.practice.akkahttp
+package com.wanderlust.server
+
+import scala.io.StdIn
+import scala.concurrent.Future
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import scala.io.StdIn
-import scala.concurrent.Future
-
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import java.util.UUID
-import com.practice.akkahttp.model.DataModel._
 
 import com.github.nscala_time.time.Imports.DateTime
+
+import java.util.UUID
+
+import com.wanderlust.model.DataModel._
 
 object ServerLauncher {
   def main(args: Array[String]) {
@@ -22,8 +24,9 @@ object ServerLauncher {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
 
-    //=========
-    var stories: List[Story] = List(Story(1, new DateTime(2017, 12, 4, 0, 0), "ccu", "home", List.empty, "native", List.empty, List(Section(new DateTime(2017, 12, 4, 0, 0), "ccu", "photo1", "enjoyed to vaca"))))
+    //========
+    val sections = List(Section("enjoyed to vaca", Some(new DateTime(2017, 12, 4, 0, 0)), Some("ccu"), Some("photo1")))
+    val stories: List[Story] = List(Story(UUID.randomUUID(), new DateTime(2017, 12, 4, 0, 0), "ccu", "home title", sections, List.empty, None, None))
     def fetchStory(itemId: Long): Future[Option[Story]] = Future {
       stories.find(o => o.id == itemId)
     }
