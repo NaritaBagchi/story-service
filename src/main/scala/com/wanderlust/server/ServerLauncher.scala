@@ -15,6 +15,7 @@ import com.github.nscala_time.time.Imports.DateTime
 import java.util.UUID
 
 import com.wanderlust.model.DataModel._
+import com.wanderlust.routes.StoryRoutes.storyRoute
 
 object ServerLauncher {
   def main(args: Array[String]) {
@@ -25,34 +26,13 @@ object ServerLauncher {
     implicit val executionContext = system.dispatcher
 
     //========
-    val sections = List(Section("enjoyed to vaca", Some(new DateTime(2017, 12, 4, 0, 0)), Some("ccu"), Some("photo1")))
-    val stories: List[Story] = List(Story(UUID.randomUUID(), new DateTime(2017, 12, 4, 0, 0), "ccu", "home title", sections, List.empty, None, None))
-    def fetchStory(itemId: Long): Future[Option[Story]] = Future {
-      stories.find(o => o.id == itemId)
-    }
+//    val sections = List(Section("enjoyed to vaca", Some(new DateTime(2017, 12, 4, 0, 0)), Some("ccu"), Some("photo1")))
+//    val stories: List[Story] = List(Story(UUID.randomUUID(), new DateTime(2017, 12, 4, 0, 0), "ccu", "home title", sections, List.empty, None, None))
+//    def fetchStory(itemId: Long): Future[Option[Story]] = Future {
+//      stories.find(o => o.id == itemId)
+//    }
 
-    //=========
-    val route =
-      pathPrefix("stories" / IntNumber) { userId =>
-        pathEnd {
-          get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
-          }
-        } ~
-          path(IntNumber) { storyId =>
-            pathEnd {
-              get {
-                val storyFut: Future[Option[Story]] = fetchStory(storyId)
-                onSuccess(storyFut) {
-                  case Some(item) => complete(item)
-                  case None       => complete(StatusCodes.NotFound)
-                }
-              }
-            }
-          }
-      }
-
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8081)
+    val bindingFuture = Http().bindAndHandle(storyRoute, "localhost", 8081)
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
