@@ -7,20 +7,22 @@ import com.datastax.driver.core.Cluster
 // category_list frozen<list<text>>, accompany_list frozen<list<text>>, external_links frozen<list<text>>, PRIMARY KEY ((place, user_id), date));
 // story_brief should also include thumbnail image
 // CREATE TABLE story_brief (place text, userId uuid, date timestamp, title text, id uuid, PRIMARY KEY (userId, date));
-trait Connector[T] {
-  def session: T
+sealed trait Connector[T] {
+  def getSession: T
   def close
 }
 
 //class CassandraConnector extends Connector {
-object CassandraConnector extends Connector[Session] {
-  private val cluster = Cluster.builder().addContactPoint("localhost").withPort(9142).build()
-  implicit def session = cluster.connect()
-
-  //implicit def session = cassSession  
-  def close = {
-    session.close();
-    cluster.close();
+trait CassandraConnector extends Connector[Session] {
+  private lazy val cluster = Cluster.builder.addContactPoint("localhost").withPort(9142).build
+  private lazy val session = cluster.connect // put inside try - handle with shutting 
+  // 12 factor - treat dependent services and platforms ervices like db services equaly as a resource 
+  // 
+    
+  override def getSession = session  
+  override def close = {
+    session.close
+    cluster.close
   }
 }
 

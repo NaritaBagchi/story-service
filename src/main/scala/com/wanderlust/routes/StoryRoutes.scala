@@ -12,9 +12,13 @@ import com.github.nscala_time.time.Imports.DateTime
 import java.util.UUID
 
 import com.wanderlust.model.DataModel._
+import com.wanderlust.persistence.CassandraConnector
+import com.wanderlust.persistence.StoryRepositoryImpl
 
 object StoryRoutes {
-  val storyRoute =
+  val storyRepo = new StoryRepositoryImpl with CassandraConnector
+  // lazy val
+   val storyRoute =
       pathPrefix("stories" / IntNumber) { userId =>
         pathEnd {
           get {
@@ -24,7 +28,8 @@ object StoryRoutes {
           path(IntNumber) { storyId =>
             pathEnd {
               get {
-                val storyFut: Future[Option[Story]] = getStoryById(storyId)
+                val storyFut: Future[Option[Story]] = storyRepo.getStoryById(storyId)
+                // check akka directive onComplete
                 onSuccess(storyFut) {
                   case Some(item) => complete(item)
                   case None       => complete(StatusCodes.NotFound)
